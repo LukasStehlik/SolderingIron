@@ -3,18 +3,23 @@
 #include <stddef.h>
 #include <stdio.h>
 #include "stm32l1xx.h"
-#include "harware_conf.h"
+#include "hardware_conf.h"
+#include "software.h"
 
-extern char* TX_Buffer;
+extern char *TX_Buffer;
+extern void (*TIM_Tvz_IRQ_Callback)(void);
 
 
 int main(void)
 {
+	TIM_Tvz_IRQ_Callback=Timer_Tvz_Callback;//Priradenie funkcie pre meranie napätie na Channel0
+
 	char buffer[10];
 	Init_RCC();
 	Init_GPIO();
 	Init_USART();
-	//Init_ADC();
+	Init_ADC();
+	Init_Timer_Tvz();
 
 	GPIO_SetBits(LED_GPIO,LED_Pin);
 	Delay(1000000);
