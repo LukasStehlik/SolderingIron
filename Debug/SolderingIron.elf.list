@@ -21,23 +21,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
   8 .ARM.attributes 00000029  00000000  00000000  0002001c  2**0
                   CONTENTS, READONLY
-  9 .debug_info   00005bf6  00000000  00000000  00020045  2**0
+  9 .debug_info   00005bd2  00000000  00000000  00020045  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_abbrev 00000e96  00000000  00000000  00025c3b  2**0
+ 10 .debug_abbrev 00000e96  00000000  00000000  00025c17  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_aranges 00000888  00000000  00000000  00026ad8  2**3
+ 11 .debug_aranges 00000880  00000000  00000000  00026ab0  2**3
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 000007d0  00000000  00000000  00027360  2**3
+ 12 .debug_ranges 000007c8  00000000  00000000  00027330  2**3
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_line   00002939  00000000  00000000  00027b30  2**0
+ 13 .debug_line   00002927  00000000  00000000  00027af8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_str    00002687  00000000  00000000  0002a469  2**0
+ 14 .debug_str    0000266e  00000000  00000000  0002a41f  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .comment      0000007e  00000000  00000000  0002caf0  2**0
+ 15 .comment      0000007e  00000000  00000000  0002ca8d  2**0
                   CONTENTS, READONLY
- 16 .debug_frame  0000247c  00000000  00000000  0002cb70  2**2
+ 16 .debug_frame  00002458  00000000  00000000  0002cb0c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 17 .stabstr      0000003f  00000000  00000000  0002efec  2**0
+ 17 .stabstr      0000003f  00000000  00000000  0002ef64  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -3227,11 +3227,11 @@ void Init_Timer_Tvz()
  80011a6:	1d3b      	adds	r3, r7, #4
  80011a8:	4618      	mov	r0, r3
  80011aa:	f7ff fd61 	bl	8000c70 <TIM_TimeBaseStructInit>
-	timTB.TIM_Period=1000;
- 80011ae:	f44f 737a 	mov.w	r3, #1000	; 0x3e8
+	timTB.TIM_Period=1000-1;
+ 80011ae:	f240 33e7 	movw	r3, #999	; 0x3e7
  80011b2:	60bb      	str	r3, [r7, #8]
-	timTB.TIM_Prescaler=16000;
- 80011b4:	f44f 537a 	mov.w	r3, #16000	; 0x3e80
+	timTB.TIM_Prescaler=16000-1; //kazdu sekundu, potom nastavime na 100ms
+ 80011b4:	f643 637f 	movw	r3, #15999	; 0x3e7f
  80011b8:	80bb      	strh	r3, [r7, #4]
 	TIM_TimeBaseInit(TIM_Tvz_Periph,&timTB);
  80011ba:	1d3b      	adds	r3, r7, #4
@@ -3323,9 +3323,6 @@ void Delay(uint32_t cycles)
  8001242:	bf00      	nop
 
 08001244 <USART2_IRQHandler>:
-{
-	USART_ITConfig(USART,USART_IT_TXE,NewState);
-}
 
 void USART2_IRQHandler()
 {

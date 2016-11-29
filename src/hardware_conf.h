@@ -40,5 +40,4 @@ void Send_Buffer(char *Buffer); //Spustenie poselania cez prerušenie
 uint16_t ADC_Meranie(); //Odmeria a vráti hodnontu ADC
 
 
-
 #endif /* HARDWARE_CONF_H_ */
