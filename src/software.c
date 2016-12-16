@@ -28,7 +28,8 @@ void Timer_Tvz_Callback()
 	/*if(values.RealTemperature<(values.SetTemperature-Hyst)) Heat_State(ENABLE);
 	if(values.RealTemperature>(values.SetTemperature+Hyst)) Heat_State(DISABLE);*/
 
-	if(values.RealTemperature<(values.SetTemperature+Hyst)) Heat_State(ENABLE);
-	if(values.RealTemperature>(values.SetTemperature-Hyst)) Heat_State(DISABLE);
 	if(values.RealTemperature>(values.SetTemperature-Hyst) && values.RealTemperature<(values.SetTemperature+Hyst)) Heat_State(DISABLE);
+	else if(values.RealTemperature<(values.SetTemperature+Hyst)) Heat_State(ENABLE);
+	else if(values.RealTemperature>(values.SetTemperature-Hyst)) Heat_State(DISABLE);
+
 }
