@@ -25,6 +25,10 @@ void Timer_Tvz_Callback()
 	temp=temp/OP_AMP_Gain;
 	values.RealTemperature=(uint16_t)(7.51*temp+30.5);
 
-	if(values.RealTemperature<(values.SetTemperature-Hyst)) Heat_State(ENABLE);
-	if(values.RealTemperature>(values.SetTemperature+Hyst)) Heat_State(DISABLE);
+	/*if(values.RealTemperature<(values.SetTemperature-Hyst)) Heat_State(ENABLE);
+	if(values.RealTemperature>(values.SetTemperature+Hyst)) Heat_State(DISABLE);*/
+
+	if(values.RealTemperature<(values.SetTemperature+Hyst)) Heat_State(ENABLE);
+	if(values.RealTemperature>(values.SetTemperature-Hyst)) Heat_State(DISABLE);
+	if(values.RealTemperature>(values.SetTemperature-Hyst) && values.RealTemperature<(values.SetTemperature+Hyst)) Heat_State(DISABLE);
 }
