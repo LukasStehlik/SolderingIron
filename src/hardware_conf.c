@@ -8,9 +8,11 @@
 #include <stddef.h>
 #include "stm32l1xx.h"
 #include "hardware_conf.h"
+#include "software.h"
 
-char *TX_Buffer;
+
 void (*TIM_Tvz_IRQ_Callback)(void);
+extern Values_Struct values;
 
 
 //Implementácia funkcií
@@ -48,6 +50,11 @@ void Init_GPIO()
 	gpio.GPIO_Pin=ADC_CH0_Pin;
 	GPIO_Init(ADC_CH0_GPIO,&gpio);
 
+	GPIO_StructInit(&gpio);
+	gpio.GPIO_Mode=GPIO_Mode_AN;
+	gpio.GPIO_Pin=ADC_CH1_Pin;
+	GPIO_Init(ADC_CH1_GPIO,&gpio);
+
 
 }
 
@@ -79,7 +86,7 @@ void Init_ADC()
 
 	ADC_StructInit(&adc);
 	ADC_Init(ADC_Periph,&adc);
-	ADC_RegularChannelConfig(ADC_Periph,ADC_Channel,1,ADC_SampleTime_384Cycles);
+	ADC_RegularChannelConfig(ADC_Periph,ADC_Channel_SetT,1,ADC_SampleTime_384Cycles);
 
 	ADC_Cmd(ADC_Periph,ENABLE);
 	while(ADC_GetFlagStatus(ADC_Periph,ADC_FLAG_ADONS)==RESET);
@@ -92,7 +99,7 @@ void Init_Timer_Tvz()
 
 	TIM_TimeBaseStructInit(&timTB);
 	timTB.TIM_Period=1000-1;
-	timTB.TIM_Prescaler=16000-1; //kazdu sekundu, potom nastavime na 100ms
+	timTB.TIM_Prescaler=1600-1; //kazdu sekundu, potom nastavime na 100ms
 	TIM_TimeBaseInit(TIM_Tvz_Periph,&timTB);
 	TIM_ITConfig(TIM_Tvz_Periph,TIM_IT_Update,ENABLE);
 
@@ -123,7 +130,7 @@ void USART2_IRQHandler()
 	char c;
 	if(USART_GetFlagStatus(USART,USART_FLAG_TXE))
 	{
-		c=*TX_Buffer++;
+		c=*values.TX_Buffer++;
 		if(c) USART_SendData(USART,c);
 		else USART_ITConfig(USART,USART_IT_TXE,DISABLE);
 	}
@@ -131,13 +138,27 @@ void USART2_IRQHandler()
 
 void Send_Buffer(char *Buffer)
 {
-	TX_Buffer=Buffer;
+	values.TX_Buffer=Buffer;
 	USART_ITConfig(USART,USART_IT_TXE,ENABLE);
 }
 
-uint16_t ADC_Meranie()
+uint16_t ADC_Meranie_SetT()
 {
+	ADC_RegularChannelConfig(ADC_Periph,ADC_Channel_SetT,1,ADC_SampleTime_384Cycles);
 	ADC_SoftwareStartConv(ADC_Periph);
 	while(ADC_GetFlagStatus(ADC_Periph,ADC_FLAG_EOC)==RESET);
 	return ADC_GetConversionValue(ADC_Periph);
+}
+
+uint16_t ADC_Meranie_RealT()
+{
+	ADC_RegularChannelConfig(ADC_Periph,ADC_Channel_RealT,1,ADC_SampleTime_384Cycles);
+	ADC_SoftwareStartConv(ADC_Periph);
+	while(ADC_GetFlagStatus(ADC_Periph,ADC_FLAG_EOC)==RESET);
+	return ADC_GetConversionValue(ADC_Periph);
+}
+
+void Heat_State(FunctionalState state)
+{
+	GPIO_WriteBit(LED_GPIO,LED_Pin,state);
 }

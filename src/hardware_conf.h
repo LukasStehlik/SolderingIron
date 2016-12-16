@@ -24,7 +24,11 @@
 #define ADC_Periph ADC1
 #define ADC_CH0_Pin GPIO_Pin_0
 #define ADC_CH0_GPIO GPIOA
-#define ADC_Channel ADC_Channel_0
+#define ADC_Channel_SetT ADC_Channel_0
+
+#define ADC_CH1_Pin GPIO_Pin_1
+#define ADC_CH1_GPIO GPIOA
+#define ADC_Channel_RealT ADC_Channel_1
 
 //TIM Tvz
 #define TIM_Tvz_Periph TIM3
@@ -35,9 +39,11 @@ void Init_GPIO();
 void Init_USART();
 void Init_ADC();
 void Init_Timer_Tvz();
+void Heat_State(FunctionalState state);
 void Delay(uint32_t cycles);
 void Send_Buffer(char *Buffer); //Spustenie poselania cez prerušenie
-uint16_t ADC_Meranie(); //Odmeria a vráti hodnontu ADC
+uint16_t ADC_Meranie_SetT(); //Odmeria a vráti hodnontu ADC
+uint16_t ADC_Meranie_RealT();
 
 
 #endif /* HARDWARE_CONF_H_ */

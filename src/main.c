@@ -6,15 +6,15 @@
 #include "hardware_conf.h"
 #include "software.h"
 
-extern char *TX_Buffer;
 extern void (*TIM_Tvz_IRQ_Callback)(void);
-
+extern Values_Struct values;
 
 int main(void)
 {
+
 	TIM_Tvz_IRQ_Callback=Timer_Tvz_Callback;//Priradenie funkcie pre meranie napätie na Channel0
 
-	char buffer[10];
+	char buffer[30];
 	Init_RCC();
 	Init_GPIO();
 	Init_USART();
@@ -26,11 +26,11 @@ int main(void)
 	GPIO_ResetBits(LED_GPIO,LED_Pin);
 	Delay(1000000);
 
-	sprintf(buffer,"Hello\n\r");
 	while (1)
 	{
+		sprintf(buffer,"RT->%d°C\n\rST->%d°C\n\r",values.RealTemperature,values.SetTemperature);
 		Send_Buffer(buffer);
-		Delay(5000000);
+		Delay(2000000);
 	}
 	return 0;
 }
