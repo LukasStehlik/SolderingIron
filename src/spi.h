@@ -15,8 +15,8 @@
 #define __SPI_H
 
 
-void initSPI2(void);
-unsigned char readWriteSPI2(unsigned char txData);
+void initSPI(void);
+unsigned char readWriteSPI(unsigned char txData);
 
 //Example of CS use
 void initCS_Pin(void);

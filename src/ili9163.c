@@ -26,10 +26,11 @@
  */
 
 #include <string.h>
-
+#include "stm32l1xx.h"
 #include "ili9163.h"
 #include "font5x8.h"
 #include "spi.h"
+#include "hardware_conf.h"
 
 // Low-level LCD driving functions --------------------------------------------------------------------------
 
@@ -48,22 +49,22 @@ void lcdWriteCommand(uint8_t address)
 {
 	cd_reset();
 
-	readWriteSPI2(address);
+	readWriteSPI(address);
 }
 
 void lcdWriteParameter(uint8_t parameter)
 {
 	cd_set();
 
-	readWriteSPI2(parameter);
+	readWriteSPI(parameter);
 }
 
 void lcdWriteData(uint8_t dataByte1, uint8_t dataByte2)
 {
 	cd_set();
 
-	readWriteSPI2(dataByte1);
-	readWriteSPI2(dataByte2);
+	readWriteSPI(dataByte1);
+	readWriteSPI(dataByte2);
 }
 
 // Initialise the display with the require screen orientation

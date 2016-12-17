@@ -4,7 +4,7 @@
 
 //TODO rework to STM32L mcu's
 
-void initSPI2(void)
+void initSPI(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -16,9 +16,9 @@ void initSPI2(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 
-	//PB3 - SPI2_SCK
-	//PB4 - SPI2_MISO
-	//PB5 - SPI2_MOSI
+	//PB3 - SPI1_SCK
+	//PB4 - SPI1_MISO
+	//PB5 - SPI1_MOSI
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3|GPIO_Pin_4|GPIO_Pin_5;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -43,7 +43,7 @@ void initSPI2(void)
 	SPI_Cmd(SPI1, ENABLE);
 }
 
-unsigned char readWriteSPI2(unsigned char txData)
+unsigned char readWriteSPI(unsigned char txData)
 {
 	unsigned char  rxData;
 

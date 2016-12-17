@@ -13,54 +13,50 @@ extern Values_Struct values;
 
 int main(void)
 {
+	RCC_HSICmd(ENABLE);
+	while(RCC_GetFlagStatus(RCC_FLAG_HSIRDY)==RESET);
+	RCC_SYSCLKConfig(RCC_SYSCLKSource_HSI);
+
+	RCC_PLLCmd(DISABLE);
+	while(RCC_GetFlagStatus(RCC_FLAG_PLLRDY)==SET);
+	RCC_PLLConfig(RCC_PLLSource_HSI,RCC_PLLMul_4,RCC_PLLDiv_2);
+	RCC_PLLCmd(ENABLE);
+	while(RCC_GetFlagStatus(RCC_FLAG_PLLRDY)==RESET);
+
+	RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+
 
 	TIM_Tvz_IRQ_Callback=Timer_Tvz_Callback;//Priradenie funkcie pre meranie napätie na Channel0
 
-	char buffer[30];
 	Init_RCC();
 	Init_GPIO();
 	Init_USART();
 	Init_ADC();
+	Init_Timer_Tvz();
 
-	initSPI2();
+	initSPI();
 	initCD_Pin();
 	initCS_Pin();
 	initRES_Pin();
 
-	Init_Timer_Tvz();
+	Print_Intro(8000000);
+	Init_Buffer(values.RealTempBuffer_Last);
+	Init_Buffer(values.RealTempBuffer);
+	Init_Buffer(values.SetTempBuffer_Last);
+	Init_Buffer(values.SetTempBuffer);
 
-	GPIO_SetBits(LED_GPIO,LED_Pin);
-	Delay(1000000);
-	GPIO_ResetBits(LED_GPIO,LED_Pin);
-	Delay(1000000);
-
-	lcdInitialise(LCD_ORIENTATION2);
-	lcdClearDisplay(decodeRgbValue(255, 255, 255));
-	lcdPutS("Polacek Palenik", 20, 17, decodeRgbValue(25,69,98), 0xFFFF);
-	lcdPutS("Stehlik Trecer", 24, 37, decodeRgbValue(25,69,98), 0xFFFF);
-	lcdPutS("Soldering ", 35, 57, decodeRgbValue(0,125,98), 0xFFFF);
-	lcdPutS("iron", 55, 77, decodeRgbValue(0,125,98), 0xFFFF);
-
-	Delay(1000000);
-	Delay(1000000);
+	values.Buffer_Lock=DISABLE;
+	values.Buffer_Counter=0;
 
 	lcdClearDisplay(decodeRgbValue(255, 255, 255));
-	uint8_t counter=0;
-	char  temp[10];
 	while (1)
 	{
-	//	sprintf(buffer,"RT->%d°C\n\rST->%d°C\n\r",values.RealTemperature,values.SetTemperature);
-	//	Send_Buffer(buffer);
-		counter++;
-		Delay(20000);
-		sprintf(temp,"Set:%d  ",counter);
-		lcdPutS(temp, 10, 5, decodeRgbValue(25,69,255), 0xFFFF);
-		sprintf(temp,"Read:%d  ",counter);
-		lcdPutS(temp, 10, 20, decodeRgbValue(0,0,255), 0xFFFF);
-		if(counter==128)counter=0;
-		lcdCircle(90,15,5,decodeRgbValue(255,0,0));
+		/*sprintf(buffer,"RT->%d°C\n\rST->%d°C\n\r",values.RealTemperature,values.SetTemperature);
+		Send_Buffer(buffer);*/
 
-		lcdPlot(counter,128-counter,decodeRgbValue(0,0,255));
+		if((values.Buffer_Counter)%5==0) Print_MainScreen();
+		Delay(10000);
+
 	}
 	return 0;
 }

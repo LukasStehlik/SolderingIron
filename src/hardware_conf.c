@@ -99,7 +99,7 @@ void Init_Timer_Tvz()
 
 	TIM_TimeBaseStructInit(&timTB);
 	timTB.TIM_Period=1000-1;
-	timTB.TIM_Prescaler=1600-1; //kazdu sekundu, potom nastavime na 100ms
+	timTB.TIM_Prescaler=3200-1; //kazdu sekundu, potom nastavime na 100ms
 	TIM_TimeBaseInit(TIM_Tvz_Periph,&timTB);
 	TIM_ITConfig(TIM_Tvz_Periph,TIM_IT_Update,ENABLE);
 
