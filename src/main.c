@@ -5,7 +5,9 @@
 #include "stm32l1xx.h"
 #include "hardware_conf.h"
 #include "software.h"
-
+#include "spi.h"
+#include "ili9163.h"
+#include "string.h"
 extern void (*TIM_Tvz_IRQ_Callback)(void);
 extern Values_Struct values;
 
@@ -19,6 +21,12 @@ int main(void)
 	Init_GPIO();
 	Init_USART();
 	Init_ADC();
+
+	initSPI2();
+	initCD_Pin();
+	initCS_Pin();
+	initRES_Pin();
+
 	Init_Timer_Tvz();
 
 	GPIO_SetBits(LED_GPIO,LED_Pin);
@@ -26,11 +34,33 @@ int main(void)
 	GPIO_ResetBits(LED_GPIO,LED_Pin);
 	Delay(1000000);
 
+	lcdInitialise(LCD_ORIENTATION2);
+	lcdClearDisplay(decodeRgbValue(255, 255, 255));
+	lcdPutS("Polacek Palenik", 20, 17, decodeRgbValue(25,69,98), 0xFFFF);
+	lcdPutS("Stehlik Trecer", 24, 37, decodeRgbValue(25,69,98), 0xFFFF);
+	lcdPutS("Soldering ", 35, 57, decodeRgbValue(0,125,98), 0xFFFF);
+	lcdPutS("iron", 55, 77, decodeRgbValue(0,125,98), 0xFFFF);
+
+	Delay(1000000);
+	Delay(1000000);
+
+	lcdClearDisplay(decodeRgbValue(255, 255, 255));
+	uint8_t counter=0;
+	char  temp[10];
 	while (1)
 	{
-		sprintf(buffer,"RT->%d°C\n\rST->%d°C\n\r",values.RealTemperature,values.SetTemperature);
-		Send_Buffer(buffer);
-		Delay(2000000);
+	//	sprintf(buffer,"RT->%d°C\n\rST->%d°C\n\r",values.RealTemperature,values.SetTemperature);
+	//	Send_Buffer(buffer);
+		counter++;
+		Delay(20000);
+		sprintf(temp,"Set:%d  ",counter);
+		lcdPutS(temp, 10, 5, decodeRgbValue(25,69,255), 0xFFFF);
+		sprintf(temp,"Read:%d  ",counter);
+		lcdPutS(temp, 10, 20, decodeRgbValue(0,0,255), 0xFFFF);
+		if(counter==128)counter=0;
+		lcdCircle(90,15,5,decodeRgbValue(255,0,0));
+
+		lcdPlot(counter,128-counter,decodeRgbValue(0,0,255));
 	}
 	return 0;
 }
