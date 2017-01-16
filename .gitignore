@@ -46,3 +46,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 /Debug/
+.settings/language.settings.xml
+.settings/language.settings.xml
+*.xml

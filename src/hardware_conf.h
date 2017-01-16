@@ -39,7 +39,7 @@ void Init_GPIO();
 void Init_USART();
 void Init_ADC();
 void Init_Timer_Tvz();
-void Heat_State(FunctionalState state);
+void Heat_State(FunctionalState state); //Nastavenie vyhrievacieho telesa
 void Delay(uint32_t cycles);
 void Send_Buffer(char *Buffer); //Spustenie poselania cez prerušenie
 uint16_t ADC_Meranie_SetT(); //Odmeria a vráti hodnontu ADC
